@@ -2,12 +2,16 @@
 
 date > /etc/vagrant_box_build_time
 
-# Apt-install various things necessary for Ruby, guest additions,
+# Add official Salt PPA
+echo deb http://ppa.launchpad.net/saltstack/salt/ubuntu `lsb_release -sc` main | tee /etc/apt/sources.list.d/saltstack.list
+wget -q -O- "http://keyserver.ubuntu.com:11371/pks/lookup?op=get&search=0x4759FA960E27C0A6" | apt-key add -
+
+# Apt-install various things necessary for Salt, guest additions,
 # etc., and remove optional things to trim down the machine.
 apt-get -y update
 apt-get -y upgrade
 apt-get -y install linux-headers-$(uname -r) build-essential
-apt-get -y install zlib1g-dev libssl-dev libreadline-gplv2-dev libyaml-dev
+apt-get -y install salt-master salt-minion
 apt-get -y install vim
 apt-get clean
 
@@ -29,18 +33,8 @@ cp /etc/sudoers /etc/sudoers.orig
 sed -i -e '/Defaults\s\+env_reset/a Defaults\texempt_group=admin' /etc/sudoers
 sed -i -e 's/%admin ALL=(ALL) ALL/%admin ALL=NOPASSWD:ALL/g' /etc/sudoers
 
-# Add puppet group
-groupadd -r puppet
-
 # Install NFS client
 apt-get -y install nfs-common
-
-# Install Ruby from packages
-apt-get -y install ruby rubygems ruby-dev
-
-# Installing chef & Puppet
-gem install chef --no-ri --no-rdoc
-gem install puppet --no-ri --no-rdoc
 
 # Installing vagrant keys
 mkdir /home/vagrant/.ssh
