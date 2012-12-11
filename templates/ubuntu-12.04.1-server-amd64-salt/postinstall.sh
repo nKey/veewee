@@ -2,6 +2,10 @@
 
 date > /etc/vagrant_box_build_time
 
+# Add official Salt PPA
+echo deb http://ppa.launchpad.net/saltstack/salt/ubuntu `lsb_release -sc` main | tee /etc/apt/sources.list.d/saltstack.list
+wget -q -O- "http://keyserver.ubuntu.com:11371/pks/lookup?op=get&search=0x4759FA960E27C0A6" | apt-key add -
+
 # Apt-install various things necessary for Ruby, guest additions,
 # etc., and remove optional things to trim down the machine.
 apt-get -y update
@@ -9,6 +13,7 @@ apt-get -y upgrade
 apt-get -y install linux-headers-$(uname -r) build-essential
 apt-get -y install zlib1g-dev libssl-dev libreadline-gplv2-dev
 apt-get -y install vim
+apt-get -y install salt-master salt-minion
 apt-get clean
 
 # Installing the virtualbox guest additions
